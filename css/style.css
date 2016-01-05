@@ -189,3 +189,9 @@ div.circle {
 #skill2 ul li:first-letter {
 	font-size: 1.5em;
 }
+
+#skill2 .proficiency {
+	float: right;
+	padding-left: 20px;
+	border-left:0px;
+}
