@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+  <style type="text/css">
+  div{
+    display: inline-block;
+    background-image:url(img/bg1.png);
+    width:213px;
+    height:78px;
+  }
+  button {
+    display: inline-block;
+    margin:0px 10px 0px 10px;
+   
+  }
+  #play{
+    background:url(img/button.png);
+    width:28px;
+    height:28px;
+  }
+
+  #next{
+    background:url(img/next.png);
+    width:28px;
+    height:28px;
+  }
+
+  #songName{
+    display: inline-block;
+    margin:5px 10px 10px 10px;
+  }
+  </style>
+  <script>
+window.onload = function(){
+
+    var songName = document.getElementById("songName");
+    var bt1 = document.getElementById("play");
+    var bt2 = document.getElementById("next");
+    var music = document.getElementById("music");
+    var songs = document.getElementsByTagName("source");
+
+    /*change the Icon of button "play"*/
+    function changeIcon(){
+      songName.innerHTML =  music.src.split('/').pop().split('.')[0];
+    };
+
+   /* initialize*/
+    music.src = songs[0].src;
+    music.play();
+    changeIcon();
+    bt1.style.backgroundImage="url(img/pause.png)";
+
+   /*switch to next song automatically*/
+    music.addEventListener("ended",function(){
+      if(music.ended == true)
+      {
+            for(var j = 0 ; j < 2 ; j++)
+          {
+                if (music.src == songs[j].src)  
+                {
+                  music.src = songs[j+1].src;
+                  break;
+                };
+          }
+          if(j == 2)
+          {
+                music.src = songs[0].src;
+          }
+          changeIcon();
+          music.play();
+      }
+    });
+
+
+   /*switch state between play and pause*/
+    bt1.onclick = function(){
+    if(music.paused == true)
+      {
+      music.play();
+      bt1.style.backgroundImage="url(img/pause.png)";
+      }
+    else if(music.paused == false)
+      {
+      music.pause();
+      bt1.style.backgroundImage="url(img/play.png)";
+      }
+    };
+
+    /*next song*/
+    bt2.onclick = function(){
+      music.paused = true;
+      for(var i = 0 ; i < 2 ; i++)
+      {
+        if (music.src == songs[i].src)  
+        {
+          music.src = songs[i+1].src;
+          break;
+        };
+      }
+      if(i == 2)
+      {
+        music.src = songs[0].src;
+      }
+      changeIcon();
+      bt1.style.backgroundImage="url(img/pause.png)";
+      music.play();
+    };
+  };
+      </script>
+</head>
+
+<body>
+  <div>
+    <p id ="songName"></p><br>
+  	<audio id="music" >
+     <source src="audio/JustTheWayYouAre.mp3" type="audio/mpeg"> 
+     <source src="audio/HotelCalifornia.mp3" type="audio/mpeg">
+     <source src="audio/NovemberRain.mp3" type="audio/mpeg"> 
+    </audio>
+    <button id="play" type="button"></button>
+    <button id="next" type="button"></button>
+  </div>
+
+</body>
+</html>
