@@ -2,7 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>无标题文档</title>
+<title>audio player</title>
+<link rel="icon" href="music.ico" type="image/x-icon">
+<link rel="shortcut icon" href="music.ico" type="image/x-icon">  
   <style type="text/css">
   div{
     display: inline-block;
@@ -12,45 +14,179 @@
   }
   button {
     display: inline-block;
-    margin:0px 10px 0px 10px;
-   
-  }
-  #play{
-    background:url(img/button.png);
+    margin:0px 0px 0px 10px;
     width:28px;
     height:28px;
+   
   }
 
   #next{
     background:url(img/next.png);
-    width:28px;
-    height:28px;
   }
 
   #songName{
     display: inline-block;
-    margin:5px 10px 10px 10px;
+    margin:10px 10px 5px 10px;
+    font-family: cursive;
+    font-size: 1.2em;
+    font-weight: 700;
   }
+
+  
+  /* volumeControl input bar */
+  #volumeControl {   
+    -webkit-appearance: none;  
+    width: 70px; /* Firefox */  
+    display: inline-block;
+    position: relative;
+    top: 10px;
+    margin:0px 0px 0px 0px; 
+  }   
+
+  #volumeControl:focus {   
+    outline: none; /* 去掉默认蓝色边框 */  
+  }   
+      
+  #volumeControl::-ms-track {   
+    width: 70px;   
+    cursor: pointer;   
+    background: transparent; /* 隐藏滑块，以便自定义滑块样式 */  
+    border-color: transparent;   
+    color: transparent;   
+  }  
+    
+/* Firefox */  
+#volumeControl::-moz-range-thumb {          
+  background-color: rgba(0,0,0,0.9);   
+  cursor: pointer;  
+  width: 6px;
+  height: 20px;
+  border-radius: 0px;
+}   
+
+ #volumeControl::-moz-range-track {   
+    width: 70px;   
+    height: 2px;   
+    cursor: pointer;    
+    background: #000;   
+  }   
+    
+/* IE */  
+#volumeControl::-ms-thumb {       
+  height: 36px;   
+  width: 16px;   
+  border-radius: 0px;   
+  background: rgba(0,0,0,0.9);   
+  cursor: pointer;   
+}  
+#volumeControl::-ms-track {   
+  width: 70px;     
+  cursor: pointer;   
+  background: transparent;   
+  border-color: transparent;    
+  color: transparent;   
+}   
+#volumeControl::-ms-fill-lower {   
+  background: #2a6495;    
+  border-radius: 0px;    
+}   
+#volumeControl:focus::-ms-fill-lower {   
+  background: #3071a9;   
+}   
+#volumeControl::-ms-fill-upper {   
+  background: #3071a9;   
+  border-radius: 0px;   
+}   
+#volumeControl:focus::-ms-fill-upper {   
+  background: #367ebd;   
+}  
+
+/* webkit */
+ #volumeControl::-webkit-slider-thumb {   
+-webkit-appearance: none;    
+height: 20px;   
+width: 6px;   
+border-radius: 0px;   
+background: #000;   
+cursor: pointer;   
+margin-top: -14px;  
+}  
+
+#volumeControl::-webkit-slider-runnable-track {  
+  position: relative;
+  top:-20px; 
+  width: 70px;
+  height: 2px;    
+  cursor: pointer;    
+  background: #000;    
+}   
+
+#volumeControl:focus::-webkit-slider-runnable-track {   
+  background: #000;   
+}
+
   </style>
+
   <script>
 window.onload = function(){
 
     var songName = document.getElementById("songName");
+
     var bt1 = document.getElementById("play");
     var bt2 = document.getElementById("next");
+    var bt3 = document.getElementById("muted");
+    var volumeControl = document.getElementById("volumeControl");
+    var volumeMemory = volumeControl.value; 
+
     var music = document.getElementById("music");
     var songs = document.getElementsByTagName("source");
 
+
     /*change the Icon of button "play"*/
-    function changeIcon(){
+    function changeSongName(){
       songName.innerHTML =  music.src.split('/').pop().split('.')[0];
     };
 
    /* initialize*/
     music.src = songs[0].src;
     music.play();
-    changeIcon();
+    changeSongName();
     bt1.style.backgroundImage="url(img/pause.png)";
+    bt3.style.backgroundImage="url(img/volume.png";
+
+    /*muted*/
+    bt3.onclick = function(){
+        if (music.muted == true)
+        {
+          bt3.style.backgroundImage = "url(img/volume.png)";
+          music.muted = false;
+          volumeControl.value = volumeMemory;
+        }
+        else
+        {
+          bt3.style.backgroundImage = "url(img/muted.png)";
+          music.muted = true;
+          volumeControl.value = 0;
+        }
+    }
+
+    /*changeVolume*/
+    volumeControl.onchange = function(){
+      if(volumeControl.value == 0)
+      {
+        bt3.style.backgroundImage = "url(img/muted.png)";
+        music.muted = true;
+        music.volume = 0;
+      }
+      else
+      {
+        bt3.style.backgroundImage = "url(img/volume.png)";
+        music.muted = false;
+        music.volume = volumeControl.value;
+        volumeMemory = volumeControl.value;
+      }
+
+    }
 
    /*switch to next song automatically*/
     music.addEventListener("ended",function(){
@@ -68,7 +204,7 @@ window.onload = function(){
           {
                 music.src = songs[0].src;
           }
-          changeIcon();
+          changeSongName();
           music.play();
       }
     });
@@ -103,7 +239,7 @@ window.onload = function(){
       {
         music.src = songs[0].src;
       }
-      changeIcon();
+      changeSongName();
       bt1.style.backgroundImage="url(img/pause.png)";
       music.play();
     };
@@ -113,14 +249,19 @@ window.onload = function(){
 
 <body>
   <div>
-    <p id ="songName"></p><br>
+    <marquee id ="songName"  scrollamount="2"></marquee><br>
+
   	<audio id="music" >
      <source src="audio/JustTheWayYouAre.mp3" type="audio/mpeg"> 
      <source src="audio/HotelCalifornia.mp3" type="audio/mpeg">
      <source src="audio/NovemberRain.mp3" type="audio/mpeg"> 
     </audio>
+
     <button id="play" type="button"></button>
     <button id="next" type="button"></button>
+    <button id="muted" type="button"></button>
+    <input id="volumeControl" type="range" min="0" max="1" step="0.05"></input>
+
   </div>
 
 </body>
